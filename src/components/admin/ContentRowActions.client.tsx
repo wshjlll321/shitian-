@@ -73,13 +73,13 @@ export function ContentRowActions({
   }
 
   return (
-    <div className="flex shrink-0 flex-col items-end gap-1.5">
-      <div className="flex items-center gap-2">
+    <div className="flex min-w-0 flex-1 flex-col gap-1.5 sm:items-end">
+      <div className="flex flex-wrap items-center gap-2">
         <button
           type="button"
           onClick={toggleStatus}
           disabled={busy !== null}
-          className="min-h-8 border border-carbon-black/15 px-3 text-[12px] text-carbon-black/65 transition hover:border-aviation-orange hover:text-aviation-orange disabled:opacity-50"
+          className="min-h-8 border border-carbon-black/15 bg-white px-3 text-[12px] text-carbon-black/65 transition hover:border-aviation-orange hover:text-aviation-orange disabled:opacity-50"
         >
           {busy === "status" ? "处理中..." : hidden ? "设为显示" : "设为不显示"}
         </button>
@@ -87,12 +87,16 @@ export function ContentRowActions({
           type="button"
           onClick={deleteRecord}
           disabled={busy !== null}
-          className="min-h-8 border border-signal-red/35 px-3 text-[12px] text-signal-red transition hover:bg-signal-red/10 disabled:opacity-50"
+          className="min-h-8 border border-signal-red/35 bg-white px-3 text-[12px] text-signal-red transition hover:bg-signal-red/10 disabled:opacity-50"
         >
           {busy === "delete" ? "删除中..." : "删除"}
         </button>
       </div>
-      {error ? <span className="max-w-48 text-right text-[11px] text-signal-red">{error}</span> : null}
+      {error ? (
+        <span className="max-w-56 text-left text-[11px] text-signal-red sm:text-right">
+          {error}
+        </span>
+      ) : null}
     </div>
   );
 }
