@@ -36,7 +36,7 @@ export function AdminSidebar({ username }: { username: string }) {
   }
 
   return (
-    <aside className="flex w-60 shrink-0 flex-col border-r border-surface-warm/12 bg-carbon-black text-surface-warm">
+    <aside className="sticky top-0 flex h-screen w-60 shrink-0 flex-col overflow-y-auto border-r border-surface-warm/12 bg-carbon-black text-surface-warm">
       <div className="border-b border-surface-warm/12 px-6 py-6">
         <div className="flex items-center gap-2.5">
           <span aria-hidden className="block h-px w-5 bg-aviation-orange" />

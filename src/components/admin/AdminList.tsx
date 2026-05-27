@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useMemo, useState } from "react";
 
 import { ContentCreateButton } from "@/components/admin/ContentCreateButton.client";
 import { ContentRowActions } from "@/components/admin/ContentRowActions.client";
@@ -41,6 +44,29 @@ export function AdminList({
   createLabel
 }: AdminListProps) {
   const actionType = contentType ?? createType;
+  const [query, setQuery] = useState("");
+  const [statusFilter, setStatusFilter] = useState<"all" | "published" | "draft">("all");
+
+  const visibleCount = items.filter((item) => item.status !== "draft").length;
+  const hiddenCount = items.length - visibleCount;
+  const normalizedQuery = query.trim().toLowerCase();
+  const filteredItems = useMemo(() => {
+    return items.filter((item) => {
+      if (statusFilter !== "all" && item.status !== statusFilter) return false;
+      if (!normalizedQuery) return true;
+
+      const haystack = [item.slug, item.primary, item.secondary]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(normalizedQuery);
+    });
+  }, [items, normalizedQuery, statusFilter]);
+
+  const filters = [
+    { key: "all", label: "全部", count: items.length },
+    { key: "published", label: "显示中", count: visibleCount },
+    { key: "draft", label: "不显示", count: hiddenCount }
+  ] as const;
 
   return (
     <div className="px-10 py-10">
@@ -59,15 +85,43 @@ export function AdminList({
         ) : null}
       </div>
 
+      <div className="mt-7 flex flex-col gap-3 border border-carbon-black/12 bg-surface-warm/60 p-3 md:flex-row md:items-center md:justify-between">
+        <div className="flex flex-wrap gap-2">
+          {filters.map((filter) => (
+            <button
+              key={filter.key}
+              type="button"
+              onClick={() => setStatusFilter(filter.key)}
+              className={`min-h-9 border px-3 text-[12px] transition ${
+                statusFilter === filter.key
+                  ? "border-aviation-orange bg-aviation-orange text-surface-warm"
+                  : "border-carbon-black/12 bg-white text-carbon-black/65 hover:border-aviation-orange hover:text-aviation-orange"
+              }`}
+            >
+              {filter.label} · {filter.count}
+            </button>
+          ))}
+        </div>
+        <label className="min-w-0 md:w-80">
+          <span className="sr-only">搜索内容</span>
+          <input
+            value={query}
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="搜索标题、摘要或 slug"
+            className="min-h-9 w-full border border-carbon-black/12 bg-white px-3 text-[13px] text-carbon-black outline-none transition placeholder:text-carbon-black/35 focus:border-aviation-orange"
+          />
+        </label>
+      </div>
+
       <ul className="mt-8 divide-y divide-carbon-black/10 border-y border-carbon-black/12">
-        {items.map((item) => (
+        {filteredItems.map((item) => (
           <li
             key={item.slug}
-            className="group flex items-center gap-6 py-5 transition hover:bg-surface-warm"
+            className="group flex flex-col gap-3 py-5 transition hover:bg-surface-warm md:flex-row md:items-center md:gap-6"
           >
             <Link
               href={`${editBase}/${item.slug}`}
-              className="flex min-w-0 flex-1 items-center gap-6"
+              className="flex min-w-0 flex-1 flex-col gap-3 sm:flex-row sm:items-center sm:gap-6"
             >
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2.5">
@@ -113,6 +167,11 @@ export function AdminList({
           </li>
         ))}
       </ul>
+      {filteredItems.length === 0 ? (
+        <div className="border-b border-carbon-black/12 py-10 text-center text-sm text-carbon-black/45">
+          没有匹配的内容，换个关键词或筛选条件试试。
+        </div>
+      ) : null}
     </div>
   );
 }

@@ -8,6 +8,7 @@ import {
   BilingualField,
   BilingualLinesField
 } from "@/components/admin/BilingualField.client";
+import { AdminEditToolbar } from "@/components/admin/AdminEditToolbar";
 import { ContentDeleteButton } from "@/components/admin/ContentDeleteButton.client";
 import {
   LanguageModeSwitcher,
@@ -103,6 +104,7 @@ export function ProductEditForm({
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [mode, setMode] = useState<EditMode>("zh");
+  const formId = "admin-product-edit-form";
 
   function updateMetric(key: string, patch: Partial<SpecRow>) {
     setKeyMetrics((rows) => rows.map((r) => (r._key === key ? { ...r, ...patch } : r)));
@@ -192,6 +194,14 @@ export function ProductEditForm({
       </h1>
       <p className="mt-2 text-sm text-carbon-black/55">slug：{product.slug}（不可修改）</p>
 
+      <AdminEditToolbar
+        formId={formId}
+        saving={saving}
+        status={status}
+        onStatusChange={setStatus}
+        viewHref={`/products/${product.slug}`}
+      />
+
       <div className="mt-5 max-w-5xl">
         <LanguageModeSwitcher
           mode={mode}
@@ -212,7 +222,7 @@ export function ProductEditForm({
         />
       </div>
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-5xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-5xl">
         {/* ---- Basic copy ---- */}
         <section className="grid gap-6">
           <label className={labelClass}>
@@ -518,7 +528,7 @@ export function ProductEditForm({
         </section>
 
         {/* ---- Publish controls ---- */}
-        <section className="mt-10 grid gap-6 border-t border-carbon-black/12 pt-7 sm:grid-cols-3">
+        <section className="mt-10 grid gap-6 border-t border-carbon-black/12 pt-7 sm:grid-cols-2">
           <label className={labelClass}>
             详情页样式 Hero variant
             <select
@@ -541,13 +551,6 @@ export function ProductEditForm({
               <option value="P1">P1</option>
               <option value="P2">P2</option>
               <option value="P3">P3</option>
-            </select>
-          </label>
-          <label className={labelClass}>
-            发布状态 Status
-            <select className={fieldClass} value={status} onChange={(e) => setStatus(e.target.value)}>
-              <option value="published">已发布</option>
-              <option value="draft">草稿（前台隐藏）</option>
             </select>
           </label>
         </section>

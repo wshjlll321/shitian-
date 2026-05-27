@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { BilingualField } from "@/components/admin/BilingualField.client";
+import { AdminEditToolbar } from "@/components/admin/AdminEditToolbar";
 import {
   LanguageModeSwitcher,
   type EditMode
@@ -314,6 +315,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [mode, setMode] = useState<EditMode>("zh");
+  const formId = "admin-home-content-form";
 
   // Strip empty EN strings before save so `pick()` falls back to Chinese.
   const clean = (v: string | undefined) => (v && v.trim() ? v.trim() : undefined);
@@ -386,11 +388,19 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         维护主页 8 节的眉标、标题、正文、指标与技术支柱。所有可双语字段都支持「+ 添加 English」与「↻ 复制中文」。
       </p>
 
+      <AdminEditToolbar
+        formId={formId}
+        saving={saving}
+        title="主页维护操作"
+        description="这一页内容较长，可以随时用这里的按钮保存。"
+        viewHref="/"
+      />
+
       <div className="mt-5 max-w-3xl">
         <LanguageModeSwitcher mode={mode} onChange={setMode} progress={progress} />
       </div>
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-4xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-4xl">
         {/* §1 Hero ----------------------------------------------------- */}
         <section className={sectionClass}>
           <SectionHeader

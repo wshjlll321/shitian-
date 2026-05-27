@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
 import { BilingualField } from "@/components/admin/BilingualField.client";
+import { AdminEditToolbar } from "@/components/admin/AdminEditToolbar";
 import {
   LanguageModeSwitcher,
   type EditMode
@@ -507,6 +508,7 @@ export function AboutContentForm({ company, mediaIndex }: Props) {
     null
   );
   const [mode, setMode] = useState<EditMode>("zh");
+  const formId = "admin-about-content-form";
 
   const clean = (v: string | undefined) => (v && v.trim() ? v.trim() : undefined);
 
@@ -620,11 +622,19 @@ export function AboutContentForm({ company, mediaIndex }: Props) {
         维护关于页的标题与引言、4 项数据、核心能力、经营理念、里程碑、资质、制造与交付、全球交付各段。所有可双语字段支持「+ 添加 English」与「↻ 复制中文」。
       </p>
 
+      <AdminEditToolbar
+        formId={formId}
+        saving={saving}
+        title="关于页维护操作"
+        description="长表单编辑时不需要滚到底部，这里可以直接保存。"
+        viewHref="/about"
+      />
+
       <div className="mt-5 max-w-3xl">
         <LanguageModeSwitcher mode={mode} onChange={setMode} progress={progress} />
       </div>
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-4xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-4xl">
         {/* §1 Hero ---------------------------------------------------- */}
         <section className={sectionClass}>
           <SectionHeader index="§1" title="关于页 Hero" subtitle="页头大标题与开场引言" />

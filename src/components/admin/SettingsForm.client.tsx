@@ -4,6 +4,7 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 
 import { BilingualField } from "@/components/admin/BilingualField.client";
+import { AdminEditToolbar } from "@/components/admin/AdminEditToolbar";
 import {
   LanguageModeSwitcher,
   type EditMode
@@ -53,6 +54,7 @@ export function SettingsForm({ site, contact, home }: SettingsFormProps) {
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [mode, setMode] = useState<EditMode>("zh");
+  const formId = "admin-settings-form";
 
   // Strip an empty trimmed string and return undefined so we don't save empty
   // EN strings into the database.
@@ -139,11 +141,19 @@ export function SettingsForm({ site, contact, home }: SettingsFormProps) {
         修改公司名称、联系方式、地址，以及主页 Hero 的标题副标。这里的内容会出现在网站页头、页脚、主页与联系页上。
       </p>
 
+      <AdminEditToolbar
+        formId={formId}
+        saving={saving}
+        title="公司信息维护操作"
+        description="保存后会同步页头、页脚、主页与联系页。"
+        viewHref="/contact"
+      />
+
       <div className="mt-5 max-w-3xl">
         <LanguageModeSwitcher mode={mode} onChange={setMode} progress={progress} />
       </div>
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-3xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-3xl">
         {/* ---- Site profile (single language) ---- */}
         <section className="grid gap-6 border-t border-carbon-black/12 pt-7">
           <h2 className="font-display text-base font-semibold">网站信息</h2>

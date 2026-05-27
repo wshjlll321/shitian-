@@ -8,6 +8,7 @@ import {
   BilingualField,
   BilingualLinesField
 } from "@/components/admin/BilingualField.client";
+import { AdminEditToolbar } from "@/components/admin/AdminEditToolbar";
 import { ContentDeleteButton } from "@/components/admin/ContentDeleteButton.client";
 import {
   LanguageModeSwitcher,
@@ -195,6 +196,7 @@ export function RecordForm({
   const [status, setStatus] = useState(initialStatus);
   const [saving, setSaving] = useState(false);
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
+  const formId = "admin-record-edit-form";
   // Page-level edit mode — defaults to 中文 so the monolingual workflow
   // stays uncluttered. Switch to "en" for focused translation work, or
   // "both" for side-by-side proof-reading.
@@ -318,13 +320,21 @@ export function RecordForm({
       <h1 className="mt-4 font-display text-3xl font-semibold tracking-[-0.01em]">{heading}</h1>
       <p className="mt-2 text-sm text-carbon-black/55">slug：{slug}（不可修改）</p>
 
+      <AdminEditToolbar
+        formId={formId}
+        saving={saving}
+        status={status}
+        onStatusChange={setStatus}
+        viewHref={viewHref}
+      />
+
       {bilingualKeys.length > 0 ? (
         <div className="mt-5 max-w-4xl">
           <LanguageModeSwitcher mode={mode} onChange={setMode} progress={progress} />
         </div>
       ) : null}
 
-      <form onSubmit={onSubmit} className="mt-8 max-w-4xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-4xl">
         <div className="grid gap-6">
           {fields.map((field) => {
             if (field.kind === "relation") {
@@ -642,18 +652,6 @@ export function RecordForm({
               </label>
             );
           })}
-
-          <label className={`${labelClass} border-t border-carbon-black/12 pt-6`}>
-            发布状态 Status
-            <select
-              className={`${fieldClass} max-w-xs`}
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
-            >
-              <option value="published">已发布</option>
-              <option value="draft">草稿（前台隐藏）</option>
-            </select>
-          </label>
         </div>
 
         {message ? (
