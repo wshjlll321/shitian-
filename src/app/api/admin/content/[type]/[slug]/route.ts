@@ -84,6 +84,45 @@ export async function PUT(request: Request, { params }: RouteContext) {
   return NextResponse.json({ ok: true });
 }
 
+export async function PATCH(request: Request, { params }: RouteContext) {
+  const { type, slug } = await params;
+
+  const revalidate = REVALIDATE[type];
+  if (!revalidate) {
+    return NextResponse.json({ error: "Unsupported content type" }, { status: 400 });
+  }
+
+  let body: { status?: string };
+  try {
+    body = await request.json();
+  } catch {
+    return NextResponse.json({ error: "请求格式有误" }, { status: 400 });
+  }
+
+  const status = body.status === "draft" ? "draft" : "published";
+  const existing = await prisma.contentRecord.findUnique({
+    where: { type_slug: { type, slug } }
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Content not found" }, { status: 404 });
+  }
+
+  const record = JSON.parse(existing.data) as Record<string, unknown>;
+  await prisma.contentRecord.update({
+    where: { type_slug: { type, slug } },
+    data: {
+      status,
+      data: JSON.stringify({ ...record, slug, status })
+    }
+  });
+
+  for (const path of revalidate(slug)) {
+    revalidatePath(path);
+  }
+
+  return NextResponse.json({ ok: true, status });
+}
+
 export async function DELETE(_request: Request, { params }: RouteContext) {
   const { type, slug } = await params;
 

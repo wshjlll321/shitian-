@@ -1,6 +1,7 @@
 import Link from "next/link";
 
 import { ContentCreateButton } from "@/components/admin/ContentCreateButton.client";
+import { ContentRowActions } from "@/components/admin/ContentRowActions.client";
 import { I18nStatusDot } from "@/components/admin/I18nProgressBar";
 import { prisma } from "@/lib/db";
 import { computeProgress, I18N_FIELDS } from "@/lib/i18n-progress";
@@ -39,10 +40,13 @@ export default async function AdminProductsPage() {
 
       <ul className="mt-8 divide-y divide-carbon-black/10 border-y border-carbon-black/12">
         {items.map((item) => (
-          <li key={item.slug}>
+          <li
+            key={item.slug}
+            className="group flex items-center gap-6 py-5 transition hover:bg-surface-warm"
+          >
             <Link
               href={`/admin/products/${item.slug}`}
-              className="group flex items-center gap-6 py-5 transition hover:bg-surface-warm"
+              className="flex min-w-0 flex-1 items-center gap-6"
             >
               <span className="font-numeric text-lg font-semibold tracking-[-0.01em] w-24">
                 {item.data.model}
@@ -77,6 +81,12 @@ export default async function AdminProductsPage() {
                 编辑 →
               </span>
             </Link>
+            <ContentRowActions
+              type="product"
+              slug={item.slug}
+              status={item.status}
+              label={item.data.displayName}
+            />
           </li>
         ))}
       </ul>

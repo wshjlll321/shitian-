@@ -1,8 +1,11 @@
 import Link from "next/link";
 
 import { ContentCreateButton } from "@/components/admin/ContentCreateButton.client";
+import { ContentRowActions } from "@/components/admin/ContentRowActions.client";
 import { I18nStatusDot } from "@/components/admin/I18nProgressBar";
 import type { I18nProgress } from "@/lib/i18n-progress";
+
+type ContentType = "product" | "case" | "news" | "scenario" | "technology";
 
 export type AdminListItem = {
   slug: string;
@@ -22,7 +25,8 @@ type AdminListProps = {
   note?: string;
   items: AdminListItem[];
   editBase: string;
-  createType?: "case" | "news" | "scenario" | "technology";
+  contentType?: ContentType;
+  createType?: ContentType;
   createLabel?: string;
 };
 
@@ -32,9 +36,12 @@ export function AdminList({
   note,
   items,
   editBase,
+  contentType,
   createType,
   createLabel
 }: AdminListProps) {
+  const actionType = contentType ?? createType;
+
   return (
     <div className="px-10 py-10">
       <p className="font-numeric text-[11px] uppercase tracking-[0.28em] text-aviation-orange">
@@ -54,10 +61,13 @@ export function AdminList({
 
       <ul className="mt-8 divide-y divide-carbon-black/10 border-y border-carbon-black/12">
         {items.map((item) => (
-          <li key={item.slug}>
+          <li
+            key={item.slug}
+            className="group flex items-center gap-6 py-5 transition hover:bg-surface-warm"
+          >
             <Link
               href={`${editBase}/${item.slug}`}
-              className="group flex items-center gap-6 py-5 transition hover:bg-surface-warm"
+              className="flex min-w-0 flex-1 items-center gap-6"
             >
               <span className="min-w-0 flex-1">
                 <span className="flex items-center gap-2.5">
@@ -92,6 +102,14 @@ export function AdminList({
                 编辑 →
               </span>
             </Link>
+            {actionType ? (
+              <ContentRowActions
+                type={actionType}
+                slug={item.slug}
+                status={item.status}
+                label={item.primary}
+              />
+            ) : null}
           </li>
         ))}
       </ul>
