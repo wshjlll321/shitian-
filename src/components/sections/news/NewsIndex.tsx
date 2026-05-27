@@ -54,8 +54,14 @@ function formatDate(value: string, locale: Locale) {
   return value ? value.slice(0, 10) : COPY.ongoing[locale];
 }
 
+function getTags(article: NewsArticle) {
+  return Array.isArray(article.tags) ? article.tags : [];
+}
+
 function getCover(article: NewsArticle) {
-  return article.images.find((image) => image.status === "local");
+  return Array.isArray(article.images)
+    ? article.images.find((image) => image.status === "local")
+    : undefined;
 }
 
 function NewsListItem({
@@ -69,6 +75,7 @@ function NewsListItem({
 }) {
   const en = locale === "en";
   const cover = getCover(article);
+  const tags = getTags(article);
   const category = (en && article.categoryEn) || article.category;
   const href = en ? `/en/news/${article.slug}` : `/news/${article.slug}`;
   return (
@@ -95,9 +102,9 @@ function NewsListItem({
           <p className="mt-3 line-clamp-3 max-w-xl text-sm leading-7 text-carbon-black/64">
             {pick(article, "summary", locale)}
           </p>
-          {article.tags.length > 0 ? (
+          {tags.length > 0 ? (
             <p className="mt-4 truncate text-[11px] uppercase tracking-[0.18em] text-metal-gray">
-              {article.tags.slice(0, 3).join(" · ")}
+              {tags.slice(0, 3).join(" · ")}
             </p>
           ) : null}
         </div>

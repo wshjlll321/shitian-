@@ -18,14 +18,22 @@ function formatDate(value: string, en: boolean) {
   return value ? value.slice(0, 10) : en ? "Ongoing" : "持续 · Ongoing";
 }
 
+function asArray<T>(value: T[] | undefined): T[] {
+  return Array.isArray(value) ? value : [];
+}
+
 export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
   const en = locale === "en";
   // Cover precedence: explicit `cover` media id first, then first local
   // image in the legacy `images[]` array. Migration debris (sourceUrl,
   // sourceRawFile, pending-download images) never appears in the UI.
-  const localImages = article.images.filter((i) => i.status === "local");
+  const localImages = asArray(article.images).filter((i) => i.status === "local");
   const cover = localImages[0];
   const gallery = localImages.slice(1, 5);
+  const tags = asArray(article.tags);
+  const bodyEn = asArray(article.bodyEn);
+  const bodyZh = asArray(article.body);
+  const paragraphs = en && bodyEn.length > 0 ? bodyEn : bodyZh;
 
   // Related news — same category, exclude self, take 3 most recent.
   const newsArticles = await getNewsArticles();
@@ -56,10 +64,10 @@ export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
               {pick(article, "summary", locale)}
             </p>
           </Reveal>
-          {article.tags.length > 0 ? (
+          {tags.length > 0 ? (
             <Reveal delay={0.16}>
               <ul className="mt-9 flex flex-wrap gap-x-2 gap-y-2">
-                {article.tags.map((tag) => (
+                {tags.map((tag) => (
                   <li
                     key={tag}
                     className="border border-surface-warm/20 px-3 py-1 text-[11px] uppercase tracking-[0.18em] text-surface-warm/72"
@@ -106,11 +114,11 @@ export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
                   <dt className="text-carbon-black">{en ? "Category" : "类别"}</dt>
                   <dd>{(en && article.categoryEn) || article.category}</dd>
                 </div>
-                {article.tags.length > 0 ? (
+                {tags.length > 0 ? (
                   <div className="border-t border-carbon-black/12 pt-4">
                     <dt className="text-carbon-black">{en ? "Keywords" : "关键词"}</dt>
                     <dd className="text-carbon-black/68">
-                      {article.tags.slice(0, 4).join(" · ")}
+                      {tags.slice(0, 4).join(" · ")}
                     </dd>
                   </div>
                 ) : null}
@@ -118,7 +126,7 @@ export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
             </aside>
 
             <article className="max-w-3xl">
-              {((en && article.bodyEn) || article.body).map((paragraph, i) => (
+              {paragraphs.map((paragraph, i) => (
                 <Reveal key={i} delay={i * 0.02}>
                   <p className="mb-7 text-base leading-9 text-carbon-black/74 md:text-lg md:leading-10">
                     {paragraph}

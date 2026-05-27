@@ -47,12 +47,46 @@ export type CollectionOptions = {
   includeDrafts?: boolean;
 };
 
+const ARRAY_FIELDS: Record<string, string[]> = {
+  product: [
+    "keyCapabilities",
+    "keyMetrics",
+    "specifications",
+    "scenarios",
+    "relatedCases",
+    "media",
+    "gallery",
+    "hotspots",
+    "sourceUrls"
+  ],
+  scenario: ["recommendedProducts", "taskFlow", "proofCases", "valueMetrics", "media"],
+  case: ["productModels", "keyData", "media", "gallery"],
+  news: ["tags", "body", "images", "videos"]
+};
+
+function normalizeRecord<T>(type: string, record: T): T {
+  const arrayFields = ARRAY_FIELDS[type];
+  if (!arrayFields) return record;
+
+  const source = record as Record<string, unknown>;
+  let next: Record<string, unknown> | undefined;
+
+  for (const field of arrayFields) {
+    if (!Array.isArray(source[field])) {
+      next ??= { ...source };
+      next[field] = [];
+    }
+  }
+
+  return (next ?? source) as T;
+}
+
 async function collection<T>(type: string, options: CollectionOptions = {}): Promise<T[]> {
   const rows = await prisma.contentRecord.findMany({
     where: options.includeDrafts ? { type } : { type, status: "published" },
     orderBy: { sortOrder: "asc" }
   });
-  return rows.map((row) => JSON.parse(row.data) as T);
+  return rows.map((row) => normalizeRecord(type, JSON.parse(row.data) as T));
 }
 
 async function singleton<T>(key: string): Promise<T> {
