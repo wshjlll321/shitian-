@@ -61,7 +61,7 @@ const ARRAY_FIELDS: Record<string, string[]> = {
   ],
   scenario: ["recommendedProducts", "taskFlow", "proofCases", "valueMetrics", "media"],
   case: ["productModels", "keyData", "media", "gallery"],
-  news: ["tags", "body", "images", "videos"]
+  news: ["tags", "body", "images", "videos", "gallery"]
 };
 
 function normalizeRecord<T>(type: string, record: T): T {

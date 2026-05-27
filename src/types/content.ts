@@ -177,6 +177,8 @@ export type NewsArticle = {
   /** Explicit cover image (media id); when absent, the first local image
    *  in `images[]` is used. CMS records should fill this. */
   cover?: string;
+  /** Optional media-library gallery ids maintained from the admin. */
+  gallery?: string[];
   images: MigratedImage[];
   videos: string[];
   /** Migration-only fields — kept for data traceability, never surfaced. */

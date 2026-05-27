@@ -95,6 +95,7 @@ function draftFromTemplate(type: string, template: Record<string, unknown>, slug
       tags: [],
       body: [],
       cover: "",
+      gallery: [],
       images: [],
       videos: [],
       sourceUrl: "",

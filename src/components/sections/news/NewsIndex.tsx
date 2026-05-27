@@ -14,7 +14,13 @@ import type { NewsArticle } from "@/types/content";
 
 type NewsIndexProps = {
   newsArticles: NewsArticle[];
+  mediaIndex?: Record<string, { src: string; alt: string }>;
   locale?: Locale;
+};
+
+type NewsImage = {
+  src: string;
+  alt: string;
 };
 
 type ChipKey = "all" | "作业案例" | "企业动态" | "低空政策观察";
@@ -58,23 +64,33 @@ function getTags(article: NewsArticle) {
   return Array.isArray(article.tags) ? article.tags : [];
 }
 
-function getCover(article: NewsArticle) {
-  return Array.isArray(article.images)
+function getCover(
+  article: NewsArticle,
+  mediaIndex: Record<string, { src: string; alt: string }>
+): NewsImage | undefined {
+  if (article.cover && mediaIndex[article.cover]) {
+    return mediaIndex[article.cover];
+  }
+
+  const legacy = Array.isArray(article.images)
     ? article.images.find((image) => image.status === "local")
     : undefined;
+  return legacy ? { src: legacy.src, alt: legacy.alt } : undefined;
 }
 
 function NewsListItem({
   article,
   index,
-  locale
+  locale,
+  mediaIndex
 }: {
   article: NewsArticle;
   index: number;
   locale: Locale;
+  mediaIndex: Record<string, { src: string; alt: string }>;
 }) {
   const en = locale === "en";
-  const cover = getCover(article);
+  const cover = getCover(article, mediaIndex);
   const tags = getTags(article);
   const category = (en && article.categoryEn) || article.category;
   const href = en ? `/en/news/${article.slug}` : `/news/${article.slug}`;
@@ -161,7 +177,7 @@ function NewsListItem({
   );
 }
 
-export function NewsIndex({ newsArticles, locale = "zh" }: NewsIndexProps) {
+export function NewsIndex({ newsArticles, mediaIndex = {}, locale = "zh" }: NewsIndexProps) {
   const en = locale === "en";
   const [chip, setChip] = useState<ChipKey>("all");
 
@@ -217,7 +233,13 @@ export function NewsIndex({ newsArticles, locale = "zh" }: NewsIndexProps) {
           {filtered.length > 0 ? (
             <ol className="divide-y divide-carbon-black/10 border-b border-carbon-black/12">
               {filtered.map((article, i) => (
-                <NewsListItem key={article.slug} article={article} index={i} locale={locale} />
+                <NewsListItem
+                  key={article.slug}
+                  article={article}
+                  index={i}
+                  locale={locale}
+                  mediaIndex={mediaIndex}
+                />
               ))}
             </ol>
           ) : (

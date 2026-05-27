@@ -176,7 +176,9 @@ export function RecordForm({
     for (const field of fields) {
       if (field.kind === "media") {
         const raw = record[field.key];
-        init[field.key] = Array.isArray(raw) ? (raw as string[]) : [];
+        if (Array.isArray(raw)) init[field.key] = raw as string[];
+        else if (typeof raw === "string" && raw) init[field.key] = [raw];
+        else init[field.key] = [];
       }
     }
     return init;
@@ -241,7 +243,8 @@ export function RecordForm({
             return spec;
           });
       } else if (field.kind === "media") {
-        next[field.key] = mediaValues[field.key];
+        const arr = mediaValues[field.key];
+        next[field.key] = field.multiple === false ? arr[0] ?? "" : arr;
       } else if (field.kind === "relation") {
         const arr = relationValues[field.key];
         next[field.key] = field.multiple === false ? arr[0] ?? "" : arr;

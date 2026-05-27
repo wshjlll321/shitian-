@@ -69,6 +69,21 @@ export const newsFields: FieldDef[] = [
   },
   { key: "publishedAt", label: "发布时间 Published at", kind: "text", placeholder: "2025-12-26" },
   { key: "summary", label: "摘要 Summary", kind: "textarea", bilingual: true },
+  {
+    key: "cover",
+    label: "封面图 Cover",
+    kind: "media",
+    multiple: false,
+    accept: "image",
+    hint: "新闻列表卡片和详情页头图。推荐 1600×900 JPG/WebP，≤ 3 MB"
+  },
+  {
+    key: "gallery",
+    label: "图片集 Gallery",
+    kind: "media",
+    accept: "image",
+    hint: "新闻详情页的附加图片，可上传多张；只需要一张图时维护封面图即可"
+  },
   { key: "tags", label: "标签 Tags（每行一个）", kind: "lines" },
   {
     key: "body",

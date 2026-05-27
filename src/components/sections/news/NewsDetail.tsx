@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Reveal } from "@/components/motion/Reveal.client";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
-import { getNewsArticles } from "@/lib/cms";
+import { getMediaIndex, getNewsArticles } from "@/lib/cms";
 import { pick, type Locale } from "@/lib/i18n";
 import { isPublished } from "@/types/content";
 import type { NewsArticle } from "@/types/content";
@@ -22,14 +22,31 @@ function asArray<T>(value: T[] | undefined): T[] {
   return Array.isArray(value) ? value : [];
 }
 
+type NewsImage = {
+  src: string;
+  alt: string;
+  originalSrc?: string;
+};
+
 export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
   const en = locale === "en";
+  const mediaIndex = await getMediaIndex();
   // Cover precedence: explicit `cover` media id first, then first local
   // image in the legacy `images[]` array. Migration debris (sourceUrl,
   // sourceRawFile, pending-download images) never appears in the UI.
-  const localImages = asArray(article.images).filter((i) => i.status === "local");
-  const cover = localImages[0];
-  const gallery = localImages.slice(1, 5);
+  const localImages: NewsImage[] = asArray(article.images)
+    .filter((i) => i.status === "local")
+    .map((i) => ({ src: i.src, alt: i.alt, originalSrc: i.originalSrc }));
+  const cover =
+    article.cover && mediaIndex[article.cover] ? mediaIndex[article.cover] : localImages[0];
+  const galleryFromMedia: NewsImage[] = asArray(article.gallery).flatMap((id) => {
+    const image = mediaIndex[id];
+    return image ? [{ src: image.src, alt: image.alt }] : [];
+  });
+  const gallery = (galleryFromMedia.length > 0 ? galleryFromMedia : localImages.slice(1, 5)).slice(
+    0,
+    4
+  );
   const tags = asArray(article.tags);
   const bodyEn = asArray(article.bodyEn);
   const bodyZh = asArray(article.body);
@@ -137,7 +154,7 @@ export async function NewsDetail({ article, locale = "zh" }: NewsDetailProps) {
               {gallery.length > 0 ? (
                 <div className="mt-16 grid gap-5 md:grid-cols-2">
                   {gallery.map((image, i) => (
-                    <Reveal key={image.originalSrc} delay={i * 0.05}>
+                    <Reveal key={image.originalSrc ?? image.src} delay={i * 0.05}>
                       <div className="relative aspect-[4/3] overflow-hidden bg-carbon-black/4">
                         <Image
                           src={image.src}
