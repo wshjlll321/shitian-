@@ -1,0 +1,48 @@
+{
+  "name": "shitian-uav-premium-site",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint",
+    "typecheck": "tsc --noEmit",
+    "db:seed": "tsx prisma/seed.ts",
+    "db:studio": "prisma studio",
+    "db:admin": "tsx prisma/create-admin.ts"
+  },
+  "prisma": {
+    "seed": "tsx prisma/seed.ts"
+  },
+  "dependencies": {
+    "@prisma/client": "^6.19.3",
+    "@react-three/drei": "latest",
+    "@react-three/fiber": "latest",
+    "bcryptjs": "^3.0.3",
+    "framer-motion": "latest",
+    "gsap": "latest",
+    "jose": "^6.2.3",
+    "lenis": "latest",
+    "next": "latest",
+    "prisma": "^6.19.3",
+    "react": "latest",
+    "react-dom": "latest",
+    "three": "~0.177.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.3.0",
+    "@types/bcryptjs": "^2.4.6",
+    "@types/node": "latest",
+    "@types/react": "latest",
+    "@types/react-dom": "latest",
+    "@types/three": "~0.177.0",
+    "autoprefixer": "latest",
+    "eslint": "latest",
+    "eslint-config-next": "latest",
+    "postcss": "latest",
+    "tailwindcss": "^3.4.17",
+    "tsx": "^4.22.3",
+    "typescript": "latest"
+  }
+}

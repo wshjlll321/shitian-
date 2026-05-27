@@ -1,0 +1,55 @@
+// Shitian Aviation site CMS — SQLite-backed.
+// Collection content stores the full typed record as JSON in `data`;
+// a few columns are promoted for listing, ordering and filtering.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+/// Collection content — products, cases, news, scenarios, technology pillars.
+model ContentRecord {
+  id        Int      @id @default(autoincrement())
+  type      String // product | case | news | scenario | technology
+  slug      String
+  status    String   @default("published") // published | draft
+  priority  String   @default("P1")
+  sortOrder Int      @default(0)
+  data      String // JSON of the full typed record
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([type, slug])
+  @@index([type])
+}
+
+/// Site-wide singletons — company profile, contact, home hero, site
+/// profile, navigation, SEO entries, media registry.
+model Singleton {
+  key       String   @id // company | contact | home | site | nav | seo | media
+  data      String // JSON
+  updatedAt DateTime @updatedAt
+}
+
+/// Images uploaded through the admin.
+model MediaAsset {
+  id        Int      @id @default(autoincrement())
+  filename  String
+  path      String   @unique // /uploads/xxxx.webp
+  alt       String   @default("")
+  width     Int?
+  height    Int?
+  createdAt DateTime @default(now())
+}
+
+/// Single admin account.
+model AdminUser {
+  id        Int      @id @default(autoincrement())
+  username  String   @unique
+  password  String // bcrypt hash
+  createdAt DateTime @default(now())
+}
