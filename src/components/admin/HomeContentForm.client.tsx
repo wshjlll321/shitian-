@@ -58,6 +58,19 @@ const labelClass = "grid gap-1.5 text-[11px] uppercase tracking-[0.16em] text-me
 const sectionClass =
   "border-t-2 border-aviation-orange/40 bg-surface-warm/60 px-7 py-7 first:border-t-0";
 
+const HOME_SECTIONS = [
+  { id: "hero", index: "01", title: "首屏", hint: "标题 / 背景" },
+  { id: "manifesto", index: "02", title: "公司主张", hint: "理念 / 数据" },
+  { id: "proof", index: "03", title: "任务实绩", hint: "实绩 / 指标" },
+  { id: "scenarios", index: "04", title: "作业现场", hint: "场景轮播" },
+  { id: "cases", index: "05", title: "案例实证", hint: "主页案例" },
+  { id: "tech", index: "06", title: "工程系统", hint: "技术支柱" },
+  { id: "trajectory", index: "07", title: "发展历程", hint: "时间线" },
+  { id: "inquiry", index: "08", title: "合作引导", hint: "CTA 文案" }
+] as const;
+
+type HomeSectionId = (typeof HOME_SECTIONS)[number]["id"];
+
 function SectionHeader({ index, title, subtitle }: { index: string; title: string; subtitle?: string }) {
   return (
     <div className="mb-6 flex items-baseline gap-4">
@@ -316,6 +329,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
   const [message, setMessage] = useState<{ type: "ok" | "err"; text: string } | null>(null);
   const [mode, setMode] = useState<EditMode>("zh");
   const formId = "admin-home-content-form";
+  const [activeSection, setActiveSection] = useState<HomeSectionId>("hero");
 
   // Strip empty EN strings before save so `pick()` falls back to Chinese.
   const clean = (v: string | undefined) => (v && v.trim() ? v.trim() : undefined);
@@ -400,9 +414,50 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         <LanguageModeSwitcher mode={mode} onChange={setMode} progress={progress} />
       </div>
 
-      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-4xl">
+      <form id={formId} onSubmit={onSubmit} className="mt-8 max-w-6xl">
+        <div className="grid gap-6 xl:grid-cols-[250px_minmax(0,1fr)] xl:items-start">
+          <aside className="border border-carbon-black/12 bg-surface-warm/70 p-3 xl:sticky xl:top-28">
+            <p className="px-2 pb-2 text-[10px] uppercase tracking-[0.2em] text-metal-gray">
+              选择维护区块
+            </p>
+            <div className="grid gap-1.5">
+              {HOME_SECTIONS.map((section) => {
+                const active = activeSection === section.id;
+                return (
+                  <button
+                    key={section.id}
+                    type="button"
+                    onClick={() => setActiveSection(section.id)}
+                    className={`grid min-h-12 grid-cols-[2.4rem_minmax(0,1fr)] items-center gap-2 border px-2.5 text-left transition ${
+                      active
+                        ? "border-aviation-orange bg-aviation-orange text-surface-warm"
+                        : "border-transparent bg-white text-carbon-black/70 hover:border-aviation-orange/45 hover:text-carbon-black"
+                    }`}
+                  >
+                    <span className="font-numeric text-[11px] uppercase tracking-[0.16em]">
+                      {section.index}
+                    </span>
+                    <span className="min-w-0">
+                      <span className="block truncate text-[13px] font-medium">
+                        {section.title}
+                      </span>
+                      <span
+                        className={`mt-0.5 block truncate text-[11px] ${
+                          active ? "text-surface-warm/70" : "text-carbon-black/40"
+                        }`}
+                      >
+                        {section.hint}
+                      </span>
+                    </span>
+                  </button>
+                );
+              })}
+            </div>
+          </aside>
+
+          <div className="min-w-0">
         {/* §1 Hero ----------------------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "hero"} className={sectionClass}>
           <SectionHeader
             index="§1"
             title="Hero · 首屏"
@@ -435,7 +490,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §2 Manifesto ------------------------------------------------ */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "manifesto"} className={sectionClass}>
           <SectionHeader index="§2" title="Manifesto · 公司主张" subtitle="眉标 / 双行大标题 / 描述 / 4 项能力 / 4 项数据" />
           <div className="grid gap-5">
             <BilingualField label="眉标 Eyebrow" kind="text" valueZh={manifesto.eyebrow} valueEn={manifesto.eyebrowEn ?? ""} onChangeZh={(v) => setManifesto({ ...manifesto, eyebrow: v })} onChangeEn={(v) => setManifesto({ ...manifesto, eyebrowEn: v })} mode={mode} />
@@ -458,7 +513,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §3 Operational Proof --------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "proof"} className={sectionClass}>
           <SectionHeader index="§3" title="Operational Record · 任务实绩" subtitle="眉标 / 双行大标题 / 描述 / 4 项指标" />
           <div className="grid gap-5">
             <BilingualField label="眉标 Eyebrow" kind="text" valueZh={proof.eyebrow} valueEn={proof.eyebrowEn ?? ""} onChangeZh={(v) => setProof({ ...proof, eyebrow: v })} onChangeEn={(v) => setProof({ ...proof, eyebrowEn: v })} mode={mode} />
@@ -491,7 +546,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §5 Scenarios picker ---------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "scenarios"} className={sectionClass}>
           <SectionHeader
             index="§5"
             title="Scenarios · 作业现场"
@@ -519,7 +574,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §"案例实证" Featured cases --------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "cases"} className={sectionClass}>
           <SectionHeader
             index="§6"
             title="Case proof · 案例实证"
@@ -616,7 +671,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §6 Tech ----------------------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "tech"} className={sectionClass}>
           <SectionHeader index="§6" title="Engineering · 工程系统" subtitle="眉标 / 标题 / 副标 / 4 个技术支柱 / 底部说明" />
           <div className="grid gap-5">
             <BilingualField label="眉标 Eyebrow" kind="text" valueZh={tech.eyebrow} valueEn={tech.eyebrowEn ?? ""} onChangeZh={(v) => setTech({ ...tech, eyebrow: v })} onChangeEn={(v) => setTech({ ...tech, eyebrowEn: v })} mode={mode} />
@@ -664,7 +719,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §7 Trajectory ---------------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "trajectory"} className={sectionClass}>
           <SectionHeader
             index="§7"
             title="Trajectory · 发展历程"
@@ -694,7 +749,7 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
         </section>
 
         {/* §8 Inquiry ------------------------------------------------- */}
-        <section className={sectionClass}>
+        <section hidden={activeSection !== "inquiry"} className={sectionClass}>
           <SectionHeader index="§8" title="Engage · 开启合作" subtitle="眉标 / 双标题 / 正文 / 响应时长" />
           <div className="grid gap-5">
             <BilingualField label="眉标 Eyebrow" kind="text" valueZh={inquiry.eyebrow} valueEn={inquiry.eyebrowEn ?? ""} onChangeZh={(v) => setInquiry({ ...inquiry, eyebrow: v })} onChangeEn={(v) => setInquiry({ ...inquiry, eyebrowEn: v })} mode={mode} />
@@ -704,6 +759,8 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
             <BilingualField label="响应文案 Response" kind="text" valueZh={inquiry.response} valueEn={inquiry.responseEn ?? ""} onChangeZh={(v) => setInquiry({ ...inquiry, response: v })} onChangeEn={(v) => setInquiry({ ...inquiry, responseEn: v })} mode={mode} />
           </div>
         </section>
+          </div>
+        </div>
 
         {message ? (
           <p
