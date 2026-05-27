@@ -9,19 +9,24 @@ async function countOf(type: string) {
 }
 
 export default async function AdminDashboardPage() {
-  const [products, cases, news, scenarios, inquiries] = await Promise.all([
+  const [products, cases, news, scenarios, technology, inquiries] = await Promise.all([
     countOf("product"),
     countOf("case"),
     countOf("news"),
     countOf("scenario"),
+    countOf("technology"),
     prisma.inquirySubmission.count()
   ]);
 
   const cards = [
+    { label: "主页内容", en: "Home", count: 1, href: "/admin/home", ready: true },
+    { label: "关于页", en: "About", count: 1, href: "/admin/about", ready: true },
     { label: "产品", en: "Products", count: products, href: "/admin/products", ready: true },
     { label: "案例", en: "Cases", count: cases, href: "/admin/cases", ready: true },
     { label: "新闻动态", en: "News", count: news, href: "/admin/news", ready: true },
     { label: "应用场景", en: "Scenarios", count: scenarios, href: "/admin/scenarios", ready: true },
+    { label: "技术能力", en: "Technology", count: technology, href: "/admin/technology", ready: true },
+    { label: "公司信息", en: "Settings", count: 1, href: "/admin/settings", ready: true },
     { label: "询盘线索", en: "Inquiries", count: inquiries, href: "/admin/inquiries", ready: true }
   ];
 
@@ -37,7 +42,7 @@ export default async function AdminDashboardPage() {
         这里管理网站上展示的全部内容。在下方进入对应模块进行编辑，保存后前台会自动更新。
       </p>
 
-      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
+      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5">
         {cards.map((card) => {
           const inner = (
             <>
@@ -82,7 +87,7 @@ export default async function AdminDashboardPage() {
       <div className="mt-10 border-t border-carbon-black/12 pt-7">
         <p className="text-[11px] uppercase tracking-[0.2em] text-metal-gray">提示</p>
         <p className="mt-2 max-w-2xl text-sm leading-7 text-carbon-black/60">
-          产品、案例、新闻、应用场景、公司信息均可在后台维护，图片可直接上传。
+          主页、关于页、产品、案例、新闻、应用场景、技术能力、公司信息和询盘线索均可在后台维护，图片可直接上传。
         </p>
       </div>
     </div>

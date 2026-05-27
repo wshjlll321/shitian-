@@ -9,8 +9,9 @@ import { getMediaAssets, getProducts } from "@/lib/cms";
 
 const COPY = {
   eyebrow: { zh: "04 — Fleet · 产品矩阵", en: "04 — Fleet · Heavy-lift portfolio" },
-  viewDetail: { zh: "查看 T280 详情", en: "View T280 detail" },
-  requestPlan: { zh: "申请 T280 作业方案", en: "Request T280 mission plan" },
+  viewDetail: { zh: "查看", en: "View" },
+  detail: { zh: "详情", en: "detail" },
+  requestPlan: { zh: "申请作业方案", en: "Request mission plan" },
   supporting: { zh: "Supporting fleet · 旁系机型", en: "Supporting fleet" },
   allProducts: { zh: "All products", en: "All products" }
 };
@@ -148,7 +149,9 @@ export async function ProductMatrix({ locale = "zh" }: { locale?: Locale } = {})
                   href={productHref(flagship.slug)}
                   className="group min-h-[2.875rem] px-5 text-[13px]"
                 >
-                  <span>{COPY.viewDetail[locale]}</span>
+                  <span>
+                    {COPY.viewDetail[locale]} {flagship.model} {COPY.detail[locale]}
+                  </span>
                   <span aria-hidden className="font-numeric text-base transition-transform duration-300 group-hover:translate-x-1">
                     →
                   </span>
@@ -158,7 +161,7 @@ export async function ProductMatrix({ locale = "zh" }: { locale?: Locale } = {})
                   className="group inline-flex items-center gap-2 text-[12px] uppercase tracking-[0.22em] text-metal-gray transition hover:text-aviation-orange"
                 >
                   <span aria-hidden className="block h-px w-5 bg-metal-gray/60 transition group-hover:bg-aviation-orange" />
-                  {COPY.requestPlan[locale]}
+                  {flagship.model} {COPY.requestPlan[locale]}
                 </Link>
               </div>
             </Reveal>
