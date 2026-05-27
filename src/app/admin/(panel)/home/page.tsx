@@ -3,6 +3,7 @@ import {
   getCaseStudies,
   getHomeContent,
   getMediaIndex,
+  getProducts,
   getScenarios
 } from "@/lib/cms";
 import { isPublished } from "@/types/content";
@@ -11,11 +12,12 @@ import type { RelationOption } from "@/components/admin/RelationPicker.client";
 export const metadata = { title: "主页内容 · 世天航空后台" };
 
 export default async function AdminHomePage() {
-  const [home, mediaIndex, allScenarios, allCases] = await Promise.all([
+  const [home, mediaIndex, allScenarios, allCases, products] = await Promise.all([
     getHomeContent(),
     getMediaIndex(),
     getScenarios(),
-    getCaseStudies()
+    getCaseStudies(),
+    getProducts()
   ]);
 
   const scenarioOptions: RelationOption[] = allScenarios.map((s) => ({
@@ -39,12 +41,23 @@ export default async function AdminHomePage() {
       priority: c.priority
     }));
 
+  const productMatrixProducts = products.map((product) => ({
+    slug: product.slug,
+    model: product.model,
+    displayName: product.displayName,
+    summary: product.summary,
+    category: product.category,
+    mediaCount: product.media.length,
+    metricLabels: product.keyMetrics.slice(0, 3).map((metric) => metric.label)
+  }));
+
   return (
     <HomeContentForm
       home={home}
       mediaIndex={mediaIndex}
       scenarioOptions={scenarioOptions}
       homepageCases={homepageCases}
+      productMatrixProducts={productMatrixProducts}
     />
   );
 }

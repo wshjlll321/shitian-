@@ -38,6 +38,16 @@ type HomepageCasePreview = {
   priority: string;
 };
 
+type ProductMatrixPreview = {
+  slug: string;
+  model: string;
+  displayName: string;
+  summary: string;
+  category: string;
+  mediaCount: number;
+  metricLabels: string[];
+};
+
 type Props = {
   home: HomeContent;
   /** Media library indexed by id — feeds MediaPicker thumbnails for the
@@ -49,6 +59,9 @@ type Props = {
    *  home admin no longer picks cases manually — this list is shown as a
    *  read-only preview with deep-links into each case's edit page. */
   homepageCases: HomepageCasePreview[];
+  /** Product matrix is generated from the published product library. This
+   *  preview makes that relationship visible from the home editor. */
+  productMatrixProducts: ProductMatrixPreview[];
 };
 
 const fieldClass =
@@ -62,11 +75,12 @@ const HOME_SECTIONS = [
   { id: "hero", index: "01", title: "首屏", hint: "标题 / 背景" },
   { id: "manifesto", index: "02", title: "公司主张", hint: "理念 / 数据" },
   { id: "proof", index: "03", title: "任务实绩", hint: "实绩 / 指标" },
-  { id: "scenarios", index: "04", title: "作业现场", hint: "场景轮播" },
-  { id: "cases", index: "05", title: "案例实证", hint: "主页案例" },
-  { id: "tech", index: "06", title: "工程系统", hint: "技术支柱" },
-  { id: "trajectory", index: "07", title: "发展历程", hint: "时间线" },
-  { id: "inquiry", index: "08", title: "合作引导", hint: "CTA 文案" }
+  { id: "products", index: "04", title: "产品矩阵", hint: "产品库生成" },
+  { id: "scenarios", index: "05", title: "作业现场", hint: "场景轮播" },
+  { id: "cases", index: "06", title: "案例实证", hint: "主页案例" },
+  { id: "tech", index: "07", title: "工程系统", hint: "技术支柱" },
+  { id: "trajectory", index: "08", title: "发展历程", hint: "时间线" },
+  { id: "inquiry", index: "09", title: "合作引导", hint: "CTA 文案" }
 ] as const;
 
 type HomeSectionId = (typeof HOME_SECTIONS)[number]["id"];
@@ -286,7 +300,13 @@ function PillarEditor({
 /*  Top-level form                                                            */
 /* -------------------------------------------------------------------------- */
 
-export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCases }: Props) {
+export function HomeContentForm({
+  home,
+  mediaIndex,
+  scenarioOptions,
+  homepageCases,
+  productMatrixProducts
+}: Props) {
   const router = useRouter();
 
   // Image picker state — each home-page image slot is a single media id
@@ -542,6 +562,81 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
                 />
               </div>
             </div>
+          </div>
+        </section>
+
+        {/* §4 Product matrix ------------------------------------------ */}
+        <section hidden={activeSection !== "products"} className={sectionClass}>
+          <SectionHeader
+            index="§4"
+            title="Fleet · 产品矩阵"
+            subtitle="这一屏由产品库自动生成:第 1 个公开产品是主推大图,其余公开产品进入底部矩阵"
+          />
+          <div className="grid gap-5">
+            <div className="border-l-2 border-aviation-orange/45 bg-surface-warm/55 px-4 py-4">
+              <p className="text-[13px] leading-7 text-carbon-black/70">
+                产品矩阵不单独维护文案,它读取
+                <strong className="text-carbon-black">产品管理</strong>
+                里的公开产品。主推区使用产品的型号、分类、叙事、前三个核心指标和第一张主图;底部矩阵使用其余产品的型号与摘要。
+              </p>
+              <div className="mt-3 flex flex-wrap gap-2">
+                <Link
+                  href="/admin/products"
+                  className="inline-flex min-h-9 items-center border border-carbon-black/15 bg-white px-3 text-[12px] text-carbon-black/70 transition hover:border-aviation-orange hover:text-aviation-orange"
+                >
+                  打开产品管理
+                </Link>
+                {productMatrixProducts[0] ? (
+                  <Link
+                    href={`/admin/products/${productMatrixProducts[0].slug}`}
+                    className="inline-flex min-h-9 items-center border border-aviation-orange/45 bg-aviation-orange/[0.08] px-3 text-[12px] text-aviation-orange transition hover:bg-aviation-orange hover:text-surface-warm"
+                  >
+                    编辑当前主推产品
+                  </Link>
+                ) : null}
+              </div>
+            </div>
+
+            {productMatrixProducts.length > 0 ? (
+              <div className="grid gap-3">
+                {productMatrixProducts.map((product, index) => (
+                  <div
+                    key={product.slug}
+                    className="grid gap-3 border border-carbon-black/12 bg-white px-4 py-3 md:grid-cols-[88px_minmax(0,1fr)_auto] md:items-center"
+                  >
+                    <div>
+                      <p className="font-numeric text-[10px] uppercase tracking-[0.18em] text-aviation-orange">
+                        {index === 0 ? "主推" : `矩阵 ${String(index).padStart(2, "0")}`}
+                      </p>
+                      <p className="mt-1 font-display text-lg font-semibold text-carbon-black">
+                        {product.model}
+                      </p>
+                    </div>
+                    <div className="min-w-0">
+                      <p className="truncate text-sm font-medium text-carbon-black">
+                        {product.displayName}
+                      </p>
+                      <p className="mt-1 truncate text-[12px] text-carbon-black/55">
+                        {product.category} · {product.summary}
+                      </p>
+                      <p className="mt-1 text-[11px] text-carbon-black/38">
+                        主图 {product.mediaCount} 张 · 指标 {product.metricLabels.join(" / ") || "未填写"}
+                      </p>
+                    </div>
+                    <Link
+                      href={`/admin/products/${product.slug}`}
+                      className="inline-flex min-h-8 items-center justify-center border border-carbon-black/15 px-3 text-[12px] text-carbon-black/65 transition hover:border-aviation-orange hover:text-aviation-orange"
+                    >
+                      编辑
+                    </Link>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              <p className="border border-carbon-black/12 bg-white px-4 py-6 text-sm text-carbon-black/50">
+                还没有公开产品。先到产品管理里创建并设为显示中,产品矩阵才会出现在主页。
+              </p>
+            )}
           </div>
         </section>
 
