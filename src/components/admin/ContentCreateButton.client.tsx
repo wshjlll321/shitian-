@@ -14,11 +14,6 @@ export function ContentCreateButton({ type, label = "新建草稿" }: ContentCre
   const [message, setMessage] = useState("");
 
   async function createDraft() {
-    const slug = window.prompt(
-      "请输入新内容 slug：只支持英文小写、数字和短横线。留空会自动生成。"
-    );
-    if (slug === null) return;
-
     setBusy(true);
     setMessage("");
 
@@ -26,7 +21,7 @@ export function ContentCreateButton({ type, label = "新建草稿" }: ContentCre
       const res = await fetch(`/api/admin/content/${type}`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ slug: slug.trim() })
+        body: JSON.stringify({})
       });
       const data = (await res.json().catch(() => ({}))) as {
         editHref?: string;

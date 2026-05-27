@@ -11,7 +11,7 @@ export type MediaIndex = Record<
 >;
 
 type MediaPickerProps = {
-  value: string[];
+  value?: string[];
   onChange: (next: string[]) => void;
   mediaIndex: MediaIndex;
   multiple?: boolean;
@@ -37,6 +37,7 @@ export function MediaPicker({
   const [uploading, setUploading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const inputRef = useRef<HTMLInputElement>(null);
+  const selected = Array.isArray(value) ? value : [];
 
   const resolve = (id: string) => mediaIndex[id] ?? extra[id];
   const acceptAttr = accept === "image" ? "image/*" : "image/*,video/*";
@@ -71,19 +72,19 @@ export function MediaPicker({
     }
     setUploading(false);
     if (newIds.length > 0) {
-      onChange(multiple ? [...value, ...newIds] : newIds.slice(0, 1));
+      onChange(multiple ? [...selected, ...newIds] : newIds.slice(0, 1));
     }
     if (inputRef.current) inputRef.current.value = "";
   }
 
   function remove(index: number) {
-    onChange(value.filter((_, i) => i !== index));
+    onChange(selected.filter((_, i) => i !== index));
   }
 
   return (
     <div className="grid gap-3">
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
-        {value.map((id, idx) => {
+        {selected.map((id, idx) => {
           const m = resolve(id);
           const isVideo = m ? m.kind === "video" || isVideoSrc(m.src) : false;
           return (

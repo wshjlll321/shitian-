@@ -243,7 +243,7 @@ export function RecordForm({
             return spec;
           });
       } else if (field.kind === "media") {
-        const arr = mediaValues[field.key];
+        const arr = mediaValues[field.key] ?? [];
         next[field.key] = field.multiple === false ? arr[0] ?? "" : arr;
       } else if (field.kind === "relation") {
         const arr = relationValues[field.key];
@@ -370,7 +370,7 @@ export function RecordForm({
                   ) : null}
                   <div className="mt-4">
                     <MediaPicker
-                      value={mediaValues[field.key]}
+                      value={mediaValues[field.key] ?? []}
                       onChange={(next) =>
                         setMediaValues((prev) => ({ ...prev, [field.key]: next }))
                       }
