@@ -31,6 +31,8 @@ export default async function AdminScenariosPage() {
       note="点击任意场景进入编辑，保存后前台场景页会自动更新。"
       items={items}
       editBase="/admin/scenarios"
+      createType="scenario"
+      createLabel="新建场景"
     />
   );
 }

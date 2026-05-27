@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ContentCreateButton } from "@/components/admin/ContentCreateButton.client";
 import { I18nStatusDot } from "@/components/admin/I18nProgressBar";
 import { prisma } from "@/lib/db";
 import { computeProgress, I18N_FIELDS } from "@/lib/i18n-progress";
@@ -24,12 +25,17 @@ export default async function AdminProductsPage() {
       <p className="font-numeric text-[11px] uppercase tracking-[0.28em] text-aviation-orange">
         Products · 产品管理
       </p>
-      <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.01em]">
-        产品 · {items.length} 项
-      </h1>
-      <p className="mt-3 max-w-2xl text-sm leading-7 text-carbon-black/60">
-        点击任意产品进入编辑。保存后，前台产品页会自动更新。
-      </p>
+      <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.01em]">
+            产品 · {items.length} 项
+          </h1>
+          <p className="mt-3 max-w-2xl text-sm leading-7 text-carbon-black/60">
+            点击任意产品进入编辑。保存后，前台产品页会自动更新。
+          </p>
+        </div>
+        <ContentCreateButton type="product" label="新建产品" />
+      </div>
 
       <ul className="mt-8 divide-y divide-carbon-black/10 border-y border-carbon-black/12">
         {items.map((item) => (

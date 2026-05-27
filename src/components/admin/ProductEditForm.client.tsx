@@ -8,6 +8,7 @@ import {
   BilingualField,
   BilingualLinesField
 } from "@/components/admin/BilingualField.client";
+import { ContentDeleteButton } from "@/components/admin/ContentDeleteButton.client";
 import {
   LanguageModeSwitcher,
   type EditMode
@@ -568,6 +569,12 @@ export function ProductEditForm({
           </Link>
         </div>
       </form>
+      <div className="mt-8 max-w-5xl border-t border-carbon-black/12 pt-6">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-metal-gray">
+          Danger zone
+        </p>
+        <ContentDeleteButton type="product" slug={product.slug} backHref="/admin/products" />
+      </div>
     </div>
   );
 }

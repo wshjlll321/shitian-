@@ -43,9 +43,13 @@ export type NavigationData = {
   footer: NavItem[];
 };
 
-async function collection<T>(type: string): Promise<T[]> {
+export type CollectionOptions = {
+  includeDrafts?: boolean;
+};
+
+async function collection<T>(type: string, options: CollectionOptions = {}): Promise<T[]> {
   const rows = await prisma.contentRecord.findMany({
-    where: { type },
+    where: options.includeDrafts ? { type } : { type, status: "published" },
     orderBy: { sortOrder: "asc" }
   });
   return rows.map((row) => JSON.parse(row.data) as T);
@@ -61,11 +65,15 @@ async function singleton<T>(key: string): Promise<T> {
 
 /* ----------------------------- Collections ----------------------------- */
 
-export const getProducts = () => collection<Product>("product");
-export const getScenarios = () => collection<Scenario>("scenario");
-export const getCaseStudies = () => collection<CaseStudy>("case");
-export const getNewsArticles = () => collection<NewsArticle>("news");
-export const getTechnologyPillars = () => collection<TechPillar>("technology");
+export const getProducts = (options?: CollectionOptions) => collection<Product>("product", options);
+export const getScenarios = (options?: CollectionOptions) =>
+  collection<Scenario>("scenario", options);
+export const getCaseStudies = (options?: CollectionOptions) =>
+  collection<CaseStudy>("case", options);
+export const getNewsArticles = (options?: CollectionOptions) =>
+  collection<NewsArticle>("news", options);
+export const getTechnologyPillars = (options?: CollectionOptions) =>
+  collection<TechPillar>("technology", options);
 
 export async function getProductBySlug(slug: string): Promise<Product | undefined> {
   const products = await getProducts();

@@ -38,6 +38,8 @@ export default async function AdminCasesPage() {
       note={`点击任意案例进入编辑。当前 ${pinnedCount} 条已勾选「在主页展示」,会自动出现在前台主页「案例实证」节。`}
       items={items}
       editBase="/admin/cases"
+      createType="case"
+      createLabel="新建案例"
     />
   );
 }

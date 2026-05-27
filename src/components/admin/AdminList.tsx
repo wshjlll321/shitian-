@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { ContentCreateButton } from "@/components/admin/ContentCreateButton.client";
 import { I18nStatusDot } from "@/components/admin/I18nProgressBar";
 import type { I18nProgress } from "@/lib/i18n-progress";
 
@@ -21,16 +22,35 @@ type AdminListProps = {
   note?: string;
   items: AdminListItem[];
   editBase: string;
+  createType?: "case" | "news" | "scenario" | "technology";
+  createLabel?: string;
 };
 
-export function AdminList({ kicker, title, note, items, editBase }: AdminListProps) {
+export function AdminList({
+  kicker,
+  title,
+  note,
+  items,
+  editBase,
+  createType,
+  createLabel
+}: AdminListProps) {
   return (
     <div className="px-10 py-10">
       <p className="font-numeric text-[11px] uppercase tracking-[0.28em] text-aviation-orange">
         {kicker}
       </p>
-      <h1 className="mt-3 font-display text-3xl font-semibold tracking-[-0.01em]">{title}</h1>
-      {note ? <p className="mt-3 max-w-2xl text-sm leading-7 text-carbon-black/60">{note}</p> : null}
+      <div className="mt-3 flex flex-col gap-4 sm:flex-row sm:items-start sm:justify-between">
+        <div>
+          <h1 className="font-display text-3xl font-semibold tracking-[-0.01em]">{title}</h1>
+          {note ? (
+            <p className="mt-3 max-w-2xl text-sm leading-7 text-carbon-black/60">{note}</p>
+          ) : null}
+        </div>
+        {createType ? (
+          <ContentCreateButton type={createType} label={createLabel} />
+        ) : null}
+      </div>
 
       <ul className="mt-8 divide-y divide-carbon-black/10 border-y border-carbon-black/12">
         {items.map((item) => (

@@ -15,9 +15,9 @@ export async function getRelationOptions(): Promise<{
   productSlugs: RelationOption[];
 }> {
   const [scenarios, cases, products] = await Promise.all([
-    getScenarios(),
-    getCaseStudies(),
-    getProducts()
+    getScenarios({ includeDrafts: true }),
+    getCaseStudies({ includeDrafts: true }),
+    getProducts({ includeDrafts: true })
   ]);
 
   return {

@@ -31,6 +31,8 @@ export default async function AdminNewsPage() {
       note="点击任意文章进入编辑。正文每行一个段落。"
       items={items}
       editBase="/admin/news"
+      createType="news"
+      createLabel="新建文章"
     />
   );
 }

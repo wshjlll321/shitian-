@@ -8,6 +8,7 @@ import {
   BilingualField,
   BilingualLinesField
 } from "@/components/admin/BilingualField.client";
+import { ContentDeleteButton } from "@/components/admin/ContentDeleteButton.client";
 import {
   LanguageModeSwitcher,
   type EditMode
@@ -46,7 +47,7 @@ const enKey = (key: string) => `${key}En`;
 export type RelationOptionsBag = Record<string, RelationOption[]>;
 
 type RecordFormProps = {
-  apiType: string;
+  apiType: "case" | "news" | "scenario" | "technology";
   slug: string;
   heading: string;
   backHref: string;
@@ -675,6 +676,12 @@ export function RecordForm({
           ) : null}
         </div>
       </form>
+      <div className="mt-8 max-w-4xl border-t border-carbon-black/12 pt-6">
+        <p className="mb-3 text-[11px] uppercase tracking-[0.16em] text-metal-gray">
+          Danger zone
+        </p>
+        <ContentDeleteButton type={apiType} slug={slug} backHref={backHref} />
+      </div>
     </div>
   );
 }

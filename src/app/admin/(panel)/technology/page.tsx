@@ -34,6 +34,8 @@ export default async function AdminTechnologyPage() {
       note="维护 4 个工程支柱(飞控 / 动力 / 载荷 / 智能闭环)的标题、概述、亮点、详细块。保存后前台 /technology 与 /en/technology 立即更新。"
       items={items}
       editBase="/admin/technology"
+      createType="technology"
+      createLabel="新建技术模块"
     />
   );
 }

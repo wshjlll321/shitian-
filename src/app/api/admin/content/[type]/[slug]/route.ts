@@ -6,6 +6,14 @@ import { prisma } from "@/lib/db";
 // Which public paths to refresh after each content type is saved. Each
 // list also includes the English mirror so /en/* routes stay in sync.
 const REVALIDATE: Record<string, (slug: string) => string[]> = {
+  product: (slug) => [
+    "/",
+    "/products",
+    `/products/${slug}`,
+    "/en",
+    "/en/products",
+    `/en/products/${slug}`
+  ],
   case: (slug) => [
     "/",
     "/cases",
@@ -67,6 +75,32 @@ export async function PUT(request: Request, { params }: RouteContext) {
       status,
       priority
     }
+  });
+
+  for (const path of revalidate(slug)) {
+    revalidatePath(path);
+  }
+
+  return NextResponse.json({ ok: true });
+}
+
+export async function DELETE(_request: Request, { params }: RouteContext) {
+  const { type, slug } = await params;
+
+  const revalidate = REVALIDATE[type];
+  if (!revalidate) {
+    return NextResponse.json({ error: "Unsupported content type" }, { status: 400 });
+  }
+
+  const existing = await prisma.contentRecord.findUnique({
+    where: { type_slug: { type, slug } }
+  });
+  if (!existing) {
+    return NextResponse.json({ error: "Content not found" }, { status: 404 });
+  }
+
+  await prisma.contentRecord.delete({
+    where: { type_slug: { type, slug } }
   });
 
   for (const path of revalidate(slug)) {

@@ -45,6 +45,9 @@ export async function PUT(request: Request, { params }: RouteContext) {
   revalidatePath("/");
   revalidatePath("/products");
   revalidatePath(`/products/${slug}`);
+  revalidatePath("/en");
+  revalidatePath("/en/products");
+  revalidatePath(`/en/products/${slug}`);
 
   return NextResponse.json({ ok: true });
 }
