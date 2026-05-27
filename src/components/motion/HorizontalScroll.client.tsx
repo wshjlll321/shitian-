@@ -27,7 +27,7 @@ export function HorizontalScroll({ children, className, trackClassName }: Horizo
     let cleanup: (() => void) | undefined;
     let cancelled = false;
 
-    loadGsap().then(({ gsap, ScrollTrigger }) => {
+    loadGsap().then(({ gsap }) => {
       if (cancelled) return;
 
       const compute = () => track.scrollWidth - wrapper.clientWidth;

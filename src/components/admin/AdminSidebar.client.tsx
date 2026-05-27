@@ -15,6 +15,7 @@ type NavItem = {
 const NAV: NavItem[] = [
   { href: "/admin", label: "仪表盘", en: "Dashboard", ready: true },
   { href: "/admin/home", label: "主页内容", en: "Home", ready: true },
+  { href: "/admin/inquiries", label: "询盘线索", en: "Inquiries", ready: true },
   { href: "/admin/about", label: "关于页", en: "About", ready: true },
   { href: "/admin/products", label: "产品", en: "Products", ready: true },
   { href: "/admin/cases", label: "案例", en: "Cases", ready: true },

@@ -53,3 +53,23 @@ model AdminUser {
   password  String // bcrypt hash
   createdAt DateTime @default(now())
 }
+
+/// Sales inquiries submitted from the public contact form.
+model InquirySubmission {
+  id        Int      @id @default(autoincrement())
+  name      String
+  company   String   @default("")
+  email     String
+  phone     String   @default("")
+  region    String   @default("")
+  product   String   @default("")
+  scenario  String   @default("")
+  message   String   @default("")
+  locale    String   @default("zh")
+  source    String   @default("contact")
+  consent   Boolean  @default(false)
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([email])
+}

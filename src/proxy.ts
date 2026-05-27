@@ -11,7 +11,7 @@ const SECRET = new TextEncoder().encode(
 // Guards the admin area. The login page and the login/logout API routes stay
 // public; everything else under /admin and /api/admin requires a valid
 // session cookie.
-export async function middleware(request: NextRequest) {
+export async function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
 
   const isPublic =
@@ -34,7 +34,7 @@ export async function middleware(request: NextRequest) {
   if (valid) return NextResponse.next();
 
   if (pathname.startsWith("/api/")) {
-    return NextResponse.json({ error: "未登录或登录已过期" }, { status: 401 });
+    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
   const url = request.nextUrl.clone();

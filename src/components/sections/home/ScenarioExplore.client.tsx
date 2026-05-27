@@ -8,7 +8,7 @@ import { useEffect, useRef, useState } from "react";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal.client";
 import { useMotionPrefs } from "@/components/providers/MotionPrefsProvider.client";
-import { altLocaleHref, pick, type Locale } from "@/lib/i18n";
+import { pick, type Locale } from "@/lib/i18n";
 import { easing } from "@/lib/motion/easing";
 import type { MediaAsset, Scenario } from "@/types/content";
 

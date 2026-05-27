@@ -1,5 +1,6 @@
 "use client";
 
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 
@@ -553,12 +554,12 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
                 <p className="mt-1 text-[12px] text-carbon-black/45">
                   暂未勾选任何案例。前往
                   {" "}
-                  <a
+                  <Link
                     href="/admin/cases"
                     className="text-aviation-orange underline decoration-aviation-orange/40 underline-offset-2 hover:no-underline"
                   >
                     案例库
-                  </a>
+                  </Link>
                   {" "}
                   打开任一案例,在底部勾选「在主页展示」即可。
                 </p>
@@ -570,23 +571,23 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
                       className="flex items-baseline justify-between gap-3 border-b border-carbon-black/10 pb-1.5"
                     >
                       <div className="min-w-0 flex-1">
-                        <a
+                        <Link
                           href={`/admin/cases/${c.slug}`}
                           className="text-[13px] text-carbon-black transition hover:text-aviation-orange"
                         >
                           {c.title}
-                        </a>
+                        </Link>
                         <p className="mt-0.5 truncate text-[11px] text-carbon-black/45">
                           {c.location || "—"} · {c.time || "持续"} · {c.priority}
                           {c.titleEn ? ` · EN ✓` : ""}
                         </p>
                       </div>
-                      <a
+                      <Link
                         href={`/admin/cases/${c.slug}`}
                         className="shrink-0 font-numeric text-[11px] uppercase tracking-[0.16em] text-aviation-orange transition hover:underline"
                       >
                         编辑 →
-                      </a>
+                      </Link>
                     </li>
                   ))}
                 </ul>

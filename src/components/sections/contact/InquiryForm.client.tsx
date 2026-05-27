@@ -71,6 +71,7 @@ function InquiryFormInner({
 }: InquiryFormProps) {
   const params = useSearchParams();
   const [status, setStatus] = useState<FormStatus>("idle");
+  const [errorMessage, setErrorMessage] = useState("");
   const en = locale === "en";
 
   // Prefill — visitors arriving from /products/:slug, /scenarios/:slug or
@@ -126,10 +127,46 @@ function InquiryFormInner({
 
       <form
         className="grid gap-9"
-        onSubmit={(event) => {
+        onSubmit={async (event) => {
           event.preventDefault();
+          const form = event.currentTarget;
+          const data = new FormData(form);
           setStatus("loading");
-          window.setTimeout(() => setStatus("sent"), 800);
+          setErrorMessage("");
+
+          try {
+            const response = await fetch("/api/inquiries", {
+              method: "POST",
+              headers: { "Content-Type": "application/json" },
+              body: JSON.stringify({
+                name: data.get("name"),
+                company: data.get("company"),
+                email: data.get("email"),
+                phone: data.get("phone"),
+                region: data.get("region"),
+                product: data.get("product"),
+                scenario: data.get("scenario"),
+                message: data.get("message"),
+                consent: data.get("consent") === "on",
+                locale,
+                source: `${window.location.pathname}${window.location.search}`
+              })
+            });
+            const payload = (await response.json().catch(() => ({}))) as { error?: string };
+            if (!response.ok) {
+              throw new Error(payload.error || "Submit failed");
+            }
+            setStatus("sent");
+          } catch (error) {
+            setStatus("error");
+            setErrorMessage(
+              error instanceof Error
+                ? error.message
+                : en
+                  ? "Submit failed. Please try again."
+                  : "提交失败，请稍后重试。"
+            );
+          }
         }}
       >
         <div className="grid gap-9 md:grid-cols-2">
@@ -224,7 +261,7 @@ function InquiryFormInner({
         </label>
 
         <label className="flex gap-3 text-xs leading-6 text-carbon-black/56">
-          <input required type="checkbox" className="mt-1 accent-aviation-orange" />
+          <input required type="checkbox" name="consent" className="mt-1 accent-aviation-orange" />
           {COPY.consent[locale]}
         </label>
 
@@ -238,6 +275,9 @@ function InquiryFormInner({
           </Button>
           {status === "sent" ? (
             <span className="text-xs text-aviation-orange">{COPY.sentNote[locale]}</span>
+          ) : null}
+          {status === "error" ? (
+            <span className="text-xs text-signal-red">{errorMessage}</span>
           ) : null}
         </div>
       </form>

@@ -158,7 +158,7 @@ export function NewsIndex({ newsArticles, locale = "zh" }: NewsIndexProps) {
   const en = locale === "en";
   const [chip, setChip] = useState<ChipKey>("all");
 
-  const published = useMemo(() => newsArticles.filter(isPublished), []);
+  const published = useMemo(() => newsArticles.filter(isPublished), [newsArticles]);
   const filtered = useMemo(
     () => (chip === "all" ? published : published.filter((a) => a.category === chip)),
     [chip, published]

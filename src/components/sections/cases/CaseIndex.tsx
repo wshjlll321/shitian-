@@ -99,7 +99,7 @@ export function CaseIndex({ caseStudies, mediaAssets, locale = "zh" }: CaseIndex
   const cHref = (slug: string) => (en ? `/en/cases/${slug}` : `/cases/${slug}`);
 
   // CMS-aware: hide drafts, then apply chip filter on the published set.
-  const published = useMemo(() => caseStudies.filter(isPublished), []);
+  const published = useMemo(() => caseStudies.filter(isPublished), [caseStudies]);
 
   // Featured = the first P0 case that has media — gives the page a strong
   // hero before the row list. Falls back to the first P0 case if none of

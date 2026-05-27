@@ -9,18 +9,20 @@ async function countOf(type: string) {
 }
 
 export default async function AdminDashboardPage() {
-  const [products, cases, news, scenarios] = await Promise.all([
+  const [products, cases, news, scenarios, inquiries] = await Promise.all([
     countOf("product"),
     countOf("case"),
     countOf("news"),
-    countOf("scenario")
+    countOf("scenario"),
+    prisma.inquirySubmission.count()
   ]);
 
   const cards = [
     { label: "产品", en: "Products", count: products, href: "/admin/products", ready: true },
     { label: "案例", en: "Cases", count: cases, href: "/admin/cases", ready: true },
     { label: "新闻动态", en: "News", count: news, href: "/admin/news", ready: true },
-    { label: "应用场景", en: "Scenarios", count: scenarios, href: "/admin/scenarios", ready: true }
+    { label: "应用场景", en: "Scenarios", count: scenarios, href: "/admin/scenarios", ready: true },
+    { label: "询盘线索", en: "Inquiries", count: inquiries, href: "/admin/inquiries", ready: true }
   ];
 
   return (
@@ -35,7 +37,7 @@ export default async function AdminDashboardPage() {
         这里管理网站上展示的全部内容。在下方进入对应模块进行编辑，保存后前台会自动更新。
       </p>
 
-      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-4">
+      <div className="mt-9 grid gap-5 sm:grid-cols-2 lg:grid-cols-5">
         {cards.map((card) => {
           const inner = (
             <>

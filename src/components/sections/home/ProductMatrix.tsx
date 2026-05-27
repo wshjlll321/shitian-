@@ -4,7 +4,7 @@ import Link from "next/link";
 import { Button } from "@/components/ui/Button";
 import { Container } from "@/components/ui/Container";
 import { Reveal } from "@/components/motion/Reveal.client";
-import { altLocaleHref, pick, t, type Locale } from "@/lib/i18n";
+import { pick, type Locale } from "@/lib/i18n";
 import { getMediaAssets, getProducts } from "@/lib/cms";
 
 const COPY = {
