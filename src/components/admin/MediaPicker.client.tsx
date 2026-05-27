@@ -3,16 +3,34 @@
 import Image from "next/image";
 import { useRef, useState } from "react";
 
-export type MediaIndex = Record<string, { src: string; alt: string }>;
+import type { MediaAsset } from "@/types/content";
+
+export type MediaIndex = Record<
+  string,
+  { src: string; alt: string; kind?: MediaAsset["kind"] }
+>;
 
 type MediaPickerProps = {
   value: string[];
   onChange: (next: string[]) => void;
   mediaIndex: MediaIndex;
   multiple?: boolean;
+  /** Limit what the user can upload — defaults to images + video for the
+   *  hero/proof slots. Pass "image" to lock to images only. */
+  accept?: "image" | "image+video";
 };
 
-export function MediaPicker({ value, onChange, mediaIndex, multiple = true }: MediaPickerProps) {
+function isVideoSrc(src: string) {
+  return /\.(mp4|webm|mov|m4v|ogg)(\?|$)/i.test(src);
+}
+
+export function MediaPicker({
+  value,
+  onChange,
+  mediaIndex,
+  multiple = true,
+  accept = "image+video"
+}: MediaPickerProps) {
   // Newly uploaded assets that aren't in the initial mediaIndex yet — kept
   // in component state so previews stay visible without a page refresh.
   const [extra, setExtra] = useState<MediaIndex>({});
@@ -21,6 +39,7 @@ export function MediaPicker({ value, onChange, mediaIndex, multiple = true }: Me
   const inputRef = useRef<HTMLInputElement>(null);
 
   const resolve = (id: string) => mediaIndex[id] ?? extra[id];
+  const acceptAttr = accept === "image" ? "image/*" : "image/*,video/*";
 
   async function handleFiles(files: FileList | null) {
     if (!files || files.length === 0) return;
@@ -37,9 +56,14 @@ export function MediaPicker({ value, onChange, mediaIndex, multiple = true }: Me
           setError(data.error ?? "上传失败");
           continue;
         }
-        const data = (await res.json()) as { asset: { id: string; src: string; alt: string } };
+        const data = (await res.json()) as {
+          asset: { id: string; src: string; alt: string; kind?: MediaAsset["kind"] };
+        };
         const asset = data.asset;
-        setExtra((prev) => ({ ...prev, [asset.id]: { src: asset.src, alt: asset.alt } }));
+        setExtra((prev) => ({
+          ...prev,
+          [asset.id]: { src: asset.src, alt: asset.alt, kind: asset.kind }
+        }));
         newIds.push(asset.id);
       } catch {
         setError("网络错误");
@@ -61,20 +85,36 @@ export function MediaPicker({ value, onChange, mediaIndex, multiple = true }: Me
       <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
         {value.map((id, idx) => {
           const m = resolve(id);
+          const isVideo = m ? m.kind === "video" || isVideoSrc(m.src) : false;
           return (
             <div
               key={`${id}-${idx}`}
               className="group relative aspect-[4/3] overflow-hidden border border-carbon-black/15 bg-carbon-black/[0.03]"
             >
               {m ? (
-                <Image
-                  src={m.src}
-                  alt={m.alt}
-                  fill
-                  sizes="200px"
-                  className="object-cover"
-                  unoptimized
-                />
+                isVideo ? (
+                  <>
+                    <video
+                      src={m.src}
+                      className="absolute inset-0 h-full w-full object-cover"
+                      muted
+                      playsInline
+                      preload="metadata"
+                    />
+                    <span className="absolute left-1 top-1 border border-surface-warm/40 bg-carbon-black/70 px-1.5 py-0.5 font-numeric text-[9px] uppercase tracking-[0.18em] text-surface-warm">
+                      VIDEO
+                    </span>
+                  </>
+                ) : (
+                  <Image
+                    src={m.src}
+                    alt={m.alt}
+                    fill
+                    sizes="200px"
+                    className="object-cover"
+                    unoptimized
+                  />
+                )
               ) : (
                 <div className="flex h-full w-full items-center justify-center px-2 text-center font-numeric text-[10px] text-carbon-black/40">
                   {id}
@@ -93,12 +133,22 @@ export function MediaPicker({ value, onChange, mediaIndex, multiple = true }: Me
         })}
         <label className="flex aspect-[4/3] cursor-pointer flex-col items-center justify-center gap-1 border border-dashed border-carbon-black/30 bg-surface-warm text-[12px] text-carbon-black/60 transition hover:border-aviation-orange hover:text-aviation-orange">
           <span className="font-numeric text-xl leading-none">+</span>
-          <span>{uploading ? "上传中…" : multiple ? "添加图片" : "上传图片"}</span>
+          <span>
+            {uploading
+              ? "上传中…"
+              : accept === "image"
+                ? multiple
+                  ? "添加图片"
+                  : "上传图片"
+                : multiple
+                  ? "添加图片/视频"
+                  : "上传图片/视频"}
+          </span>
           <input
             ref={inputRef}
             type="file"
             multiple={multiple}
-            accept="image/*"
+            accept={acceptAttr}
             hidden
             disabled={uploading}
             onChange={(e) => handleFiles(e.target.files)}

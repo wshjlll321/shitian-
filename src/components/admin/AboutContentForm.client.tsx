@@ -346,12 +346,16 @@ function FieldReelEditor({
           <p className="text-[10px] uppercase tracking-[0.16em] text-metal-gray">
             图片 / Image
           </p>
+          <p className="mt-1 text-[12px] leading-5 text-carbon-black/50">
+            推荐 1200×900 或 1600×1200,JPG / WebP,≤ 3 MB。横版图请勾「宽」、竖版选「竖」以适配版面。
+          </p>
           <div className="mt-2">
             <MediaPicker
               value={row.mediaId ? [row.mediaId] : []}
               onChange={(next) => onChange({ ...row, mediaId: next[0] ?? "" })}
               mediaIndex={mediaIndex}
               multiple={false}
+              accept="image"
             />
           </div>
         </div>

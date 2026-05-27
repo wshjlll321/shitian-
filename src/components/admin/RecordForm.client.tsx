@@ -25,7 +25,17 @@ export type FieldDef =
   | { key: string; label: string; kind: "lines"; hint?: string; bilingual?: boolean }
   | { key: string; label: string; kind: "select"; options: { value: string; label: string }[] }
   | { key: string; label: string; kind: "specs"; hint?: string }
-  | { key: string; label: string; kind: "media"; hint?: string; multiple?: boolean }
+  | {
+      key: string;
+      label: string;
+      kind: "media";
+      hint?: string;
+      multiple?: boolean;
+      /** Limit the file picker. Defaults to "image+video" so hero/scenario
+       *  backdrops can carry MP4 loops; pass "image" for cover/gallery
+       *  slots where only stills make sense. */
+      accept?: "image" | "image+video";
+    }
   | {
       key: string;
       label: string;
@@ -353,6 +363,7 @@ export function RecordForm({
                       }
                       mediaIndex={mediaIndex}
                       multiple={field.multiple !== false}
+                      accept={field.accept}
                     />
                   </div>
                 </div>

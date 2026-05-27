@@ -55,9 +55,11 @@ export function HeroImmersive({ homeHero, media, locale = "zh" }: HeroImmersiveP
         className="absolute inset-0 bg-[radial-gradient(ellipse_at_72%_38%,rgba(198,106,50,0.18),transparent_45%),linear-gradient(180deg,#171816_0%,#0f100e_100%)]"
       />
 
-      {/* Cinematic product photo — T280 真机主视觉. Anchors the slide with
-          a real aviation product image rather than the previous 3D placeholder.
-          Slow ken-burns scale-in gives the static photo a sense of breathing. */}
+      {/* Cinematic product photo or video — anchors the slide with a real
+          aviation product asset. When admins pick a video media asset, it
+          plays inline as an autoplay/loop/muted backdrop (browsers require
+          muted for autoplay); otherwise we fall back to the static photo
+          with a slow ken-burns scale-in. */}
       <motion.div
         aria-hidden
         className="pointer-events-none absolute inset-0"
@@ -65,14 +67,27 @@ export function HeroImmersive({ homeHero, media, locale = "zh" }: HeroImmersiveP
         animate={reduce ? undefined : { scale: 1.0, opacity: 1 }}
         transition={{ duration: 2.4, ease: easing.out }}
       >
-        <Image
-          src={media?.src ?? "/media/old-site/images/63580a43d1b3.jpg"}
-          alt={media?.alt ?? homeHero.visual.fallbackLabel}
-          fill
-          priority
-          sizes="100vw"
-          className="object-cover object-[60%_50%]"
-        />
+        {media?.kind === "video" ? (
+          <video
+            src={media.src}
+            autoPlay
+            muted
+            loop
+            playsInline
+            preload="auto"
+            poster={homeHero.visual.fallbackLabel}
+            className="absolute inset-0 h-full w-full object-cover object-[60%_50%]"
+          />
+        ) : (
+          <Image
+            src={media?.src ?? "/media/old-site/images/63580a43d1b3.jpg"}
+            alt={media?.alt ?? homeHero.visual.fallbackLabel}
+            fill
+            priority
+            sizes="100vw"
+            className="object-cover object-[60%_50%]"
+          />
+        )}
         {/* Photo's own duotone wash — pushes the photo into the carbon-black
             palette so it sits cohesively with the rest of the slide rather
             than looking like a stock image dropped in. */}

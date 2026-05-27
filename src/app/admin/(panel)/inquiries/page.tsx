@@ -1,5 +1,6 @@
 import Link from "next/link";
 
+import { InquiryDeleteButton } from "@/components/admin/InquiryDeleteButton.client";
 import { pick } from "@/lib/i18n";
 import { prisma } from "@/lib/db";
 import type { Product, Scenario } from "@/types/content";
@@ -85,7 +86,8 @@ export default async function AdminInquiriesPage() {
                 <th className="whitespace-nowrap px-0 py-4 pr-6 font-medium">联系人</th>
                 <th className="whitespace-nowrap px-0 py-4 pr-6 font-medium">联系方式</th>
                 <th className="whitespace-nowrap px-0 py-4 pr-6 font-medium">项目方向</th>
-                <th className="min-w-80 px-0 py-4 font-medium">需求简述</th>
+                <th className="min-w-80 px-0 py-4 pr-6 font-medium">需求简述</th>
+                <th className="w-20 px-0 py-4 font-medium text-right">操作</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-carbon-black/10">
@@ -124,11 +126,14 @@ export default async function AdminInquiriesPage() {
                       <span className="block">{compact(product)}</span>
                       <span className="block">{compact(scenario)}</span>
                     </td>
-                    <td className="py-5 text-[13px] leading-6 text-carbon-black/70">
+                    <td className="py-5 pr-6 text-[13px] leading-6 text-carbon-black/70">
                       <p className="max-w-xl whitespace-pre-line">{compact(row.message)}</p>
                       <p className="mt-3 font-numeric text-[10px] uppercase tracking-[0.16em] text-carbon-black/35">
                         Source · {compact(row.source)}
                       </p>
+                    </td>
+                    <td className="py-5 text-right">
+                      <InquiryDeleteButton id={row.id} />
                     </td>
                   </tr>
                 );

@@ -1,10 +1,12 @@
 import type { Metadata } from "next";
 import { Inter, Noto_Sans_SC } from "next/font/google";
+import { headers } from "next/headers";
 import type { ReactNode } from "react";
 
 import "./globals.css";
 
 import { siteProfile } from "@/content/site";
+import { localeFromPathname } from "@/lib/i18n";
 
 // Chinese face — Google's Noto Sans SC. Latin subset alone would be preloaded
 // but never used on Chinese-heavy pages, so we skip preload and let the browser
@@ -37,9 +39,21 @@ export const metadata: Metadata = {
 // Root layout — only html/body/fonts. The marketing chrome (header, footer,
 // scroll providers) lives in the (site) route-group layout; the admin area
 // has its own layout, so it stays free of the public site shell.
-export default function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+//
+// The `<html lang>` attribute is resolved from the request path so /en/*
+// pages announce English to assistive tech and search engines while the
+// default Chinese routes keep zh-CN.
+export default async function RootLayout({ children }: Readonly<{ children: ReactNode }>) {
+  const headerList = await headers();
+  const pathname =
+    headerList.get("x-invoke-path") ??
+    headerList.get("x-pathname") ??
+    headerList.get("next-url") ??
+    "/";
+  const lang = localeFromPathname(pathname) === "en" ? "en" : "zh-CN";
+
   return (
-    <html lang="zh-CN" className={`${sansChinese.variable} ${inter.variable}`}>
+    <html lang={lang} className={`${sansChinese.variable} ${inter.variable}`}>
       <body>{children}</body>
     </html>
   );

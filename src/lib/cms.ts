@@ -173,14 +173,17 @@ export async function getMediaById(id: string): Promise<MediaAsset | undefined> 
 }
 
 /**
- * Pre-built media index for admin forms — a flat { id -> { src, alt } } map
- * so the admin's MediaPicker can render thumbnails without an extra fetch.
+ * Pre-built media index for admin forms — a flat { id -> { src, alt, kind } }
+ * map so the admin's MediaPicker can render thumbnails (or video previews)
+ * without an extra fetch.
  */
-export async function getMediaIndex(): Promise<Record<string, { src: string; alt: string }>> {
+export async function getMediaIndex(): Promise<
+  Record<string, { src: string; alt: string; kind: MediaAsset["kind"] }>
+> {
   const assets = await getMediaAssets();
-  const index: Record<string, { src: string; alt: string }> = {};
+  const index: Record<string, { src: string; alt: string; kind: MediaAsset["kind"] }> = {};
   for (const asset of assets) {
-    index[asset.id] = { src: asset.src, alt: asset.alt };
+    index[asset.id] = { src: asset.src, alt: asset.alt, kind: asset.kind };
   }
   return index;
 }

@@ -1,6 +1,7 @@
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/db";
+import { clientIp, rateLimit } from "@/lib/rate-limit";
 
 type InquiryPayload = {
   name?: string;
@@ -25,6 +26,17 @@ function isEmail(value: string): boolean {
 }
 
 export async function POST(request: Request) {
+  // Keep one client from spamming the sales pipeline.
+  const ip = clientIp(request);
+  const limit = rateLimit(`inquiry:${ip}`, { max: 5, windowMs: 60 * 60_000 });
+  if (!limit.ok) {
+    const minutes = Math.max(1, Math.ceil((limit.resetAt - Date.now()) / 60_000));
+    return NextResponse.json(
+      { error: `提交过于频繁,请 ${minutes} 分钟后再试` },
+      { status: 429, headers: { "Retry-After": String(minutes * 60) } }
+    );
+  }
+
   let body: InquiryPayload;
   try {
     body = (await request.json()) as InquiryPayload;

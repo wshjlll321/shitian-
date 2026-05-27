@@ -32,8 +32,20 @@ export const caseFields: FieldDef[] = [
   { key: "task", label: "任务说明 Task", kind: "textarea", bilingual: true },
   { key: "result", label: "作业结果 Result", kind: "textarea", bilingual: true },
   { key: "keyData", label: "关键数据 Key data", kind: "specs", hint: "案例页展示的关键数字" },
-  { key: "media", label: "封面图 Cover", kind: "media", hint: "案例列表与详情页顶部的主图,放 1 张即可" },
-  { key: "gallery", label: "现场图 Gallery", kind: "media", hint: "详情页底部展示的现场图,可上传多张" },
+  {
+    key: "media",
+    label: "封面图 Cover",
+    kind: "media",
+    accept: "image",
+    hint: "案例列表与详情页顶部的主图,放 1 张即可。推荐 1600×1000(16:10) JPG/WebP,≤ 3 MB"
+  },
+  {
+    key: "gallery",
+    label: "现场图 Gallery",
+    kind: "media",
+    accept: "image",
+    hint: "详情页底部展示的现场图,可上传多张。推荐 1600×1200(4:3) JPG/WebP,≤ 3 MB / 张"
+  },
   {
     key: "showOnHomepage",
     label: "在主页展示 / Show on homepage",
@@ -113,7 +125,12 @@ export const scenarioFields: FieldDef[] = [
     hint: "从案例库中选择"
   },
   { key: "valueMetrics", label: "价值指标 Value metrics", kind: "specs" },
-  { key: "media", label: "场景背景图 Media", kind: "media", hint: "场景页大背景图,可上传多张" },
+  {
+    key: "media",
+    label: "场景背景图 Media",
+    kind: "media",
+    hint: "场景页全屏大背景。推荐 1920×1080 JPG/WebP,≤ 5 MB。也可上传 H.264 MP4(≤ 25 MB,自动循环静音)"
+  },
   { key: "cta", label: "行动号召 CTA", kind: "text", bilingual: true },
   { key: "priority", label: "优先级 Priority", kind: "select", options: PRIORITY_OPTIONS }
 ];

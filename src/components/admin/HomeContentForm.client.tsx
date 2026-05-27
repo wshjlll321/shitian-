@@ -404,11 +404,14 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
             <BilingualField label="副描述 Subtitle" kind="textarea" valueZh={heroSubtitle} valueEn={heroSubtitleEn} onChangeZh={setHeroSubtitle} onChangeEn={setHeroSubtitleEn} mode={mode} />
             <div className="border-t border-carbon-black/10 pt-5">
               <p className="text-[10px] uppercase tracking-[0.16em] text-metal-gray">
-                Hero 背景图 / Background image
+                Hero 背景图 / Background image / 视频
               </p>
-              <p className="mt-1 text-[12px] text-carbon-black/55">
-                首屏大背景。从媒体库选 1 张;留空则用默认底图。
-              </p>
+              <ul className="mt-1 grid gap-0.5 text-[12px] leading-5 text-carbon-black/55">
+                <li>· 图片: 1920×1080 或 2560×1440,JPG / WebP / PNG,建议 ≤ 5 MB</li>
+                <li>· 视频: 1920×1080 H.264 MP4,6–12 秒循环、无音轨,建议 ≤ 25 MB</li>
+                <li>· 视频会自动循环静音播放(浏览器要求静音才能自动开始)</li>
+                <li>· 留空则使用代码内置兜底图</li>
+              </ul>
               <div className="mt-3">
                 <MediaPicker
                   value={heroMedia}
@@ -458,11 +461,13 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
             </label>
             <div className="border-t border-carbon-black/10 pt-5">
               <p className="text-[10px] uppercase tracking-[0.16em] text-metal-gray">
-                §3 背景图 / Backdrop image
+                §3 背景图 / Backdrop image / 视频
               </p>
-              <p className="mt-1 text-[12px] text-carbon-black/55">
-                整屏铺满的电影感背景。推荐选有人物或机型动作的实拍图。
-              </p>
+              <ul className="mt-1 grid gap-0.5 text-[12px] leading-5 text-carbon-black/55">
+                <li>· 图片: 1920×1080 横幅图,JPG / WebP,建议 ≤ 5 MB</li>
+                <li>· 视频: 1920×1080 H.264 MP4,无音轨,建议 ≤ 25 MB,自动循环</li>
+                <li>· 推荐选有人物或机型动作的实拍素材</li>
+              </ul>
               <div className="mt-3">
                 <MediaPicker
                   value={proofMedia}
@@ -662,9 +667,10 @@ export function HomeContentForm({ home, mediaIndex, scenarioOptions, homepageCas
               <p className="text-[10px] uppercase tracking-[0.16em] text-metal-gray">
                 中央铭牌图 / Centre plate image
               </p>
-              <p className="mt-1 text-[12px] text-carbon-black/55">
-                时间线中央悬浮的 T280 铭牌图。可换成其它机型实拍。
-              </p>
+              <ul className="mt-1 grid gap-0.5 text-[12px] leading-5 text-carbon-black/55">
+                <li>· 推荐尺寸 1200×900 或 1600×1200(4:3),JPG / PNG / WebP,≤ 3 MB</li>
+                <li>· 中央悬浮的机型铭牌静态图(视频也可,会自动循环静音)</li>
+              </ul>
               <div className="mt-3">
                 <MediaPicker
                   value={trajectoryMedia}

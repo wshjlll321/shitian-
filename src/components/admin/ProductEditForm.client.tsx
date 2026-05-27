@@ -476,21 +476,33 @@ export function ProductEditForm({
 
           <div className="mt-2 border-t border-carbon-black/10 pt-6">
             <h3 className="font-display text-base font-semibold">主图 Hero image</h3>
-            <p className="mt-1.5 text-[12px] text-carbon-black/50">
-              产品列表与详情页顶部展示的主图。建议放 1 张。
-            </p>
+            <ul className="mt-1.5 grid gap-0.5 text-[12px] leading-5 text-carbon-black/50">
+              <li>· 推荐尺寸 1600×1000(16:10),JPG / WebP / PNG,≤ 5 MB</li>
+              <li>· 列表卡片与详情页顶部都用这张,只放 1 张即可</li>
+            </ul>
             <div className="mt-4">
-              <MediaPicker value={media} onChange={setMedia} mediaIndex={mediaIndex} />
+              <MediaPicker
+                value={media}
+                onChange={setMedia}
+                mediaIndex={mediaIndex}
+                accept="image"
+              />
             </div>
           </div>
 
           <div className="mt-2 border-t border-carbon-black/10 pt-6">
             <h3 className="font-display text-base font-semibold">产品图库 Gallery</h3>
-            <p className="mt-1.5 text-[12px] text-carbon-black/50">
-              产品详情页底部展示的图库，可上传多张。
-            </p>
+            <ul className="mt-1.5 grid gap-0.5 text-[12px] leading-5 text-carbon-black/50">
+              <li>· 推荐尺寸 1600×1200(4:3)或 1600×1000(16:10),JPG / WebP,≤ 3 MB / 张</li>
+              <li>· 产品详情页底部展示,可上传多张</li>
+            </ul>
             <div className="mt-4">
-              <MediaPicker value={gallery} onChange={setGallery} mediaIndex={mediaIndex} />
+              <MediaPicker
+                value={gallery}
+                onChange={setGallery}
+                mediaIndex={mediaIndex}
+                accept="image"
+              />
             </div>
           </div>
 

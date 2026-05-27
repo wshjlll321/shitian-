@@ -3,6 +3,8 @@ import "server-only";
 import { cookies } from "next/headers";
 import { SignJWT, jwtVerify } from "jose";
 
+import { SESSION_SECRET_BYTES } from "@/lib/session-secret";
+
 /**
  * Admin session — a signed JWT stored in an httpOnly cookie.
  * Single-admin model: the only thing the token carries is the username.
@@ -10,9 +12,7 @@ import { SignJWT, jwtVerify } from "jose";
 
 export const SESSION_COOKIE = "shitian_admin";
 
-const SECRET = new TextEncoder().encode(
-  process.env.ADMIN_SESSION_SECRET ?? "st-aviation-cms-local-dev-secret"
-);
+const SECRET = SESSION_SECRET_BYTES;
 
 export type AdminSession = {
   username: string;
